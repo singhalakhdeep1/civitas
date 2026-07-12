@@ -86,3 +86,17 @@ services:
 volumes:
   postgres_data:
   redis_data:
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: civic-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:4000
+    depends_on:
+      - backend
