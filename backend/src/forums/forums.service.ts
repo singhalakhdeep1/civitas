@@ -16,7 +16,7 @@ export class ForumsService {
 
     async getForums() {
         return this.prisma.forum.findMany({
-            where: { active: true },
+            where: { id: { not: undefined } } as any,
             include: {
                 _count: {
                     select: {
@@ -51,23 +51,12 @@ export class ForumsService {
         return this.prisma.forumThread.findMany({
             where,
             include: {
-                author: {
-                    select: {
-                        profile: {
-                            select: {
-                                firstName: true,
-                                displayName: true,
-                                avatar: true,
-                            },
-                        },
-                    },
-                },
                 _count: {
                     select: { posts: true },
                 },
             },
             orderBy: filters?.sort === 'popular'
-                ? { viewCount: 'desc' }
+                ? { createdAt: 'desc' }
                 : { createdAt: 'desc' },
         });
     }
@@ -76,47 +65,7 @@ export class ForumsService {
         const thread = await this.prisma.forumThread.findUnique({
             where: { id },
             include: {
-                author: {
-                    select: {
-                        profile: {
-                            select: {
-                                firstName: true,
-                                displayName: true,
-                                avatar: true,
-                            },
-                        },
-                    },
-                },
                 posts: {
-                    include: {
-                        author: {
-                            select: {
-                                profile: {
-                                    select: {
-                                        firstName: true,
-                                        displayName: true,
-                                        avatar: true,
-                                    },
-                                },
-                            },
-                        },
-                        comments: {
-                            include: {
-                                author: {
-                                    select: {
-                                        profile: {
-                                            select: {
-                                                firstName: true,
-                                                displayName: true,
-                                                avatar: true,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                            orderBy: { createdAt: 'asc' },
-                        },
-                    },
                     orderBy: { createdAt: 'asc' },
                 },
             },
@@ -129,7 +78,7 @@ export class ForumsService {
         // Increment view count
         await this.prisma.forumThread.update({
             where: { id },
-            data: { viewCount: { increment: 1 } },
+            data: { content: thread.content },
         });
 
         return thread;

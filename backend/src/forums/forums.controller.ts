@@ -26,7 +26,7 @@ export class ForumsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Create thread' })
-    createThread(@Param('forumId') forumId: string, @Request() req, @Body() dto: any) {
+    createThread(@Param('forumId') forumId: string, @Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.forumsService.createThread(forumId, req.user.userId, dto);
     }
 
@@ -46,7 +46,7 @@ export class ForumsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Create post' })
-    createPost(@Param('threadId') threadId: string, @Request() req, @Body() dto: any) {
+    createPost(@Param('threadId') threadId: string, @Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.forumsService.createPost(threadId, req.user.userId, dto);
     }
 
@@ -54,7 +54,7 @@ export class ForumsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Create comment' })
-    createComment(@Param('postId') postId: string, @Request() req, @Body() dto: any) {
+    createComment(@Param('postId') postId: string, @Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.forumsService.createComment(postId, req.user.userId, dto);
     }
 }

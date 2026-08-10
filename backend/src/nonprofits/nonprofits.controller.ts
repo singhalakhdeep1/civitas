@@ -12,7 +12,7 @@ export class NonprofitsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Create nonprofit organization' })
-    create(@Request() req, @Body() dto: any) {
+    create(@Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.nonprofitsService.create(req.user.userId, dto);
     }
 
@@ -32,7 +32,7 @@ export class NonprofitsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update nonprofit' })
-    update(@Param('id') id: string, @Request() req, @Body() dto: any) {
+    update(@Param('id') id: string, @Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.nonprofitsService.update(id, req.user.userId, dto);
     }
 
@@ -40,7 +40,7 @@ export class NonprofitsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete nonprofit' })
-    delete(@Param('id') id: string, @Request() req) {
+    delete(@Param('id') id: string, @Request() req: { user: { userId: string } }) {
         return this.nonprofitsService.delete(id, req.user.userId);
     }
 
@@ -48,7 +48,7 @@ export class NonprofitsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Request verification' })
-    requestVerification(@Param('id') id: string, @Request() req, @Body() documents: any) {
+    requestVerification(@Param('id') id: string, @Request() req: { user: { userId: string } }, @Body() documents: any) {
         return this.nonprofitsService.requestVerification(id, req.user.userId, documents);
     }
 
@@ -56,7 +56,7 @@ export class NonprofitsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Add team member' })
-    addTeamMember(@Param('id') id: string, @Request() req, @Body() dto: any) {
+    addTeamMember(@Param('id') id: string, @Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.nonprofitsService.addTeamMember(id, req.user.userId, dto);
     }
 
@@ -76,7 +76,7 @@ export class NonprofitsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Add review' })
-    addReview(@Param('id') id: string, @Request() req, @Body() dto: any) {
+    addReview(@Param('id') id: string, @Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.nonprofitsService.addReview(id, req.user.userId, dto);
     }
 }

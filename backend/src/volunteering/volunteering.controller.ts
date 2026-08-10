@@ -12,7 +12,7 @@ export class VolunteeringController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Create/update volunteer profile' })
-    createProfile(@Request() req, @Body() dto: any) {
+    createProfile(@Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.volunteeringService.createProfile(req.user.userId, dto);
     }
 
@@ -34,7 +34,7 @@ export class VolunteeringController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Apply for opportunity' })
-    apply(@Param('id') id: string, @Request() req, @Body() dto: any) {
+    apply(@Param('id') id: string, @Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.volunteeringService.apply(id, req.user.userId, dto);
     }
 
@@ -58,7 +58,7 @@ export class VolunteeringController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Generate certificate' })
-    generateCertificate(@Request() req, @Body() dto: any) {
+    generateCertificate(@Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.volunteeringService.generateCertificate(req.user.userId, dto.nonprofitId);
     }
 
@@ -66,7 +66,7 @@ export class VolunteeringController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get my applications' })
-    getMyApplications(@Request() req) {
+    getMyApplications(@Request() req: { user: { userId: string } }) {
         return this.volunteeringService.getMyApplications(req.user.userId);
     }
 
@@ -74,7 +74,7 @@ export class VolunteeringController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get my hours' })
-    getMyHours(@Request() req) {
+    getMyHours(@Request() req: { user: { userId: string } }) {
         return this.volunteeringService.getMyHours(req.user.userId);
     }
 }

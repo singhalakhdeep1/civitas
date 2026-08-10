@@ -769,6 +769,9 @@ model VolunteerApplication {
   
   opportunityId  String
   opportunity    VolunteerOpportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  volunteerProfileId String?
+  volunteerProfile   VolunteerProfile? @relation(fields: [volunteerProfileId], references: [id])
   
   // Application
   message        String?
@@ -796,7 +799,8 @@ model VolunteerHours {
   opportunityId  String?
   opportunity    VolunteerOpportunity? @relation(fields: [opportunityId], references: [id], onDelete: SetNull)
   
-  volunteerProfile VolunteerProfile @relation(fields: [userId], references: [id])
+  volunteerProfileId String?
+  volunteerProfile   VolunteerProfile? @relation(fields: [volunteerProfileId], references: [id])
   
   // Hours
   date           DateTime

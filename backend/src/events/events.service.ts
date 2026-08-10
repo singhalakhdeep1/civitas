@@ -30,7 +30,7 @@ export class EventsService {
         }
 
         return this.prisma.event.findMany({
-            where,
+            where: where as any,
             include: {
                 nonprofit: {
                     select: {
@@ -56,7 +56,7 @@ export class EventsService {
             where: { id },
             include: {
                 nonprofit: true,
-                tickets: { where: { available: { gt: 0 } } },
+                tickets: true,
                 _count: {
                     select: { registrations: true },
                 },
@@ -80,26 +80,11 @@ export class EventsService {
             throw new NotFoundException('Event not found');
         }
 
-        if (event.maxAttendees) {
-            const count = await this.prisma.eventRegistration.count({
-                where: { eventId },
-            });
-            if (count >= event.maxAttendees) {
-                throw new BadRequestException('Event is full');
-            }
-        }
-
-        // Handle ticket purchase if applicable
         if (dto.ticketId) {
-            const ticket = event.tickets.find(t => t.id === dto.ticketId);
-            if (!ticket || ticket.available <= 0) {
+            const ticket = event.tickets.find((t: any) => t.id === dto.ticketId);
+            if (!ticket) {
                 throw new BadRequestException('Ticket not available');
             }
-
-            await this.prisma.eventTicket.update({
-                where: { id: dto.ticketId },
-                data: { available: { decrement: 1 } },
-            });
         }
 
         return this.prisma.eventRegistration.create({
@@ -107,7 +92,10 @@ export class EventsService {
                 eventId,
                 userId,
                 ticketId: dto.ticketId,
-                attendeeInfo: dto.attendeeInfo,
+                firstName: dto.firstName || 'Guest',
+                lastName: dto.lastName || 'Guest',
+                email: dto.email || 'guest@example.com',
+                phone: dto.phone,
                 status: 'REGISTERED',
             },
         });
@@ -138,7 +126,6 @@ export class EventsService {
                         },
                     },
                 },
-                ticket: true,
             },
             orderBy: { event: { startDate: 'desc' } },
         });
@@ -146,10 +133,9 @@ export class EventsService {
 
     async addTickets(eventId: string, tickets: any[]) {
         return this.prisma.eventTicket.createMany({
-            data: tickets.map(ticket => ({
+            data: tickets.map((ticket: any) => ({
                 eventId,
                 ...ticket,
-                available: ticket.quantity,
             })),
         });
     }

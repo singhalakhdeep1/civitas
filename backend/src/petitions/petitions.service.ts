@@ -29,18 +29,6 @@ export class PetitionsService {
         return this.prisma.petition.findMany({
             where,
             include: {
-                creator: {
-                    select: {
-                        profile: {
-                            select: {
-                                firstName: true,
-                                lastName: true,
-                                displayName: true,
-                                avatar: true,
-                            },
-                        },
-                    },
-                },
                 _count: {
                     select: { signatures: true },
                 },
@@ -70,8 +58,8 @@ export class PetitionsService {
                     take: 10,
                 },
                 signatures: {
-                    where: { anonymous: false },
-                    orderBy: { createdAt: 'desc' },
+                    where: { showPublicly: true },
+                    orderBy: { signedAt: 'desc' },
                     take: 20,
                     include: {
                         user: {
@@ -140,8 +128,8 @@ export class PetitionsService {
         });
 
         // Check if target reached
-        if (petition.targetSignatures &&
-            petition.currentSignatures + 1 >= petition.targetSignatures) {
+        if (petition.signatureGoal &&
+            petition.currentSignatures + 1 >= petition.signatureGoal) {
             await this.prisma.petition.update({
                 where: { id: petitionId },
                 data: { status: 'SUCCESSFUL' },
@@ -177,17 +165,6 @@ export class PetitionsService {
             ],
             take: 10,
             include: {
-                creator: {
-                    select: {
-                        profile: {
-                            select: {
-                                firstName: true,
-                                lastName: true,
-                                avatar: true,
-                            },
-                        },
-                    },
-                },
                 _count: {
                     select: { signatures: true },
                 },

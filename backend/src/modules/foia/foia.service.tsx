@@ -1,13 +1,11 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Queue } from 'bull';
-import { InjectQueue } from '@nestjs/bull';
 
 @Injectable()
 export class FOIAService {
   constructor(
     private prisma: PrismaService,
-    @InjectQueue('foia') private foiaQueue: Queue,
+    private foiaQueue: any,
   ) {}
 
   async submitFOIARequest(data: any) {

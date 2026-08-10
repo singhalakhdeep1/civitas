@@ -64,7 +64,7 @@ export class StructuredLoggingService {
     return uuidv4();
   }
 
-  private createLogEntry(level: string, message: string, additionalContext?: Record<string, any>, error?: string): LogEntry {
+  private createLogEntry(level: string, message: string, additionalContext?: Record<string, any>, error?: string | null): LogEntry {
     const context = this.currentContext || this.defaultContext();
 
     return {

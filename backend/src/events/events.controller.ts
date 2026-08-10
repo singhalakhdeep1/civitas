@@ -32,7 +32,7 @@ export class EventsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Register for event' })
-    register(@Param('id') id: string, @Request() req, @Body() dto: any) {
+    register(@Param('id') id: string, @Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.eventsService.register(id, req.user.userId, dto);
     }
 
@@ -48,7 +48,7 @@ export class EventsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get my events' })
-    getMyEvents(@Request() req) {
+    getMyEvents(@Request() req: { user: { userId: string } }) {
         return this.eventsService.getMyEvents(req.user.userId);
     }
 

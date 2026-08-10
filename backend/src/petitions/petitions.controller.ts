@@ -12,7 +12,7 @@ export class PetitionsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Create petition' })
-    create(@Request() req, @Body() dto: any) {
+    create(@Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.petitionsService.create(req.user.userId, dto);
     }
 
@@ -38,7 +38,7 @@ export class PetitionsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Sign petition' })
-    sign(@Param('id') id: string, @Request() req, @Body() dto: any) {
+    sign(@Param('id') id: string, @Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.petitionsService.sign(id, req.user.userId, dto);
     }
 
@@ -46,7 +46,7 @@ export class PetitionsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Add petition update' })
-    addUpdate(@Param('id') id: string, @Request() req, @Body() dto: any) {
+    addUpdate(@Param('id') id: string, @Request() req: { user: { userId: string } }, @Body() dto: any) {
         return this.petitionsService.addUpdate(id, req.user.userId, dto);
     }
 }

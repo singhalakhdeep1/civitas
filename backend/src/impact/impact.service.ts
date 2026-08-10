@@ -30,7 +30,7 @@ export class ImpactService {
         });
 
         const stories = await this.prisma.impactStory.findMany({
-            where: { nonprofitId, published: true },
+            where: { nonprofitId } as any,
             orderBy: { createdAt: 'desc' },
             take: 10,
         });
@@ -50,16 +50,7 @@ export class ImpactService {
 
         return this.prisma.impactStory.findMany({
             where,
-            include: {
-                nonprofit: {
-                    select: {
-                        id: true,
-                        name: true,
-                        logo: true,
-                        verified: true,
-                    },
-                },
-            },
+            include: {} as any,
             orderBy: { createdAt: 'desc' },
         });
     }

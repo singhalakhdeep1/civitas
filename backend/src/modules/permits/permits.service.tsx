@@ -1,13 +1,11 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Queue } from 'bull';
-import { InjectQueue } from '@nestjs/bull';
 
 @Injectable()
 export class PermitsService {
   constructor(
     private prisma: PrismaService,
-    @InjectQueue('permits') private permitsQueue: Queue,
+    private permitsQueue: any,
   ) {}
 
   async createPermitApplication(data: any) {
