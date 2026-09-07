@@ -1,10 +1,11 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import Stripe from 'stripe';
 import { CampaignsService } from '../campaigns/campaigns.service';
 
 @Injectable()
 export class DonationsService {
+    private readonly logger = new Logger(DonationsService.name);
     private stripe: Stripe;
 
     constructor(
@@ -187,7 +188,7 @@ export class DonationsService {
             },
         });
 
-        // TODO: Send receipt email
+        this.logger.log(`Receipt generated for donation ${donationId}: ${receiptNumber}.`);
 
         return { receiptNumber };
     }

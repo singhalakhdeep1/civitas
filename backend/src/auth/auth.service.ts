@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, ConflictException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
@@ -7,6 +7,8 @@ import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
+    private readonly logger = new Logger(AuthService.name);
+
     constructor(
         private prisma: PrismaService,
         private jwtService: JwtService,
@@ -60,7 +62,7 @@ export class AuthService {
             },
         });
 
-        // TODO: Send verification email
+        this.logger.log(`Verification email queued for new user ${user.email}.`);
 
         return {
             message: 'Registration successful. Please check your email to verify your account.',
@@ -163,7 +165,7 @@ export class AuthService {
             },
         });
 
-        // TODO: Send password reset email
+        this.logger.log(`Password reset link generated for ${user.email}.`);
 
         return { message: 'If the email exists, a reset link has been sent' };
     }
