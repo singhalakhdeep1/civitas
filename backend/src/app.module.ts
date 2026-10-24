@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { BullModule } from '@nestjs/bull';
+// import { BullModule } from '@nestjs/bull';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
@@ -33,8 +33,8 @@ import { AdminModule } from './admin/admin.module';
 
         // Rate limiting
         ThrottlerModule.forRoot([{
-            ttl: parseInt(process.env.RATE_LIMIT_TTL) || 60,
-            limit: parseInt(process.env.RATE_LIMIT_MAX) || 100,
+            ttl: parseInt(process.env.RATE_LIMIT_TTL || '60'),
+            limit: parseInt(process.env.RATE_LIMIT_MAX || '100'),
         }]),
 
         // Schedule
@@ -43,14 +43,8 @@ import { AdminModule } from './admin/admin.module';
         // Events
         EventEmitterModule.forRoot(),
 
-        // Bull queue
-        BullModule.forRoot({
-            redis: {
-                host: process.env.REDIS_HOST || 'localhost',
-                port: parseInt(process.env.REDIS_PORT) || 6379,
-                password: process.env.REDIS_PASSWORD,
-            },
-        }),
+        // Bull queue disabled — package not installed
+        // BullModule.forRoot({ redis: { host: 'localhost', port: 6379 } }),
 
         // Core modules
         PrismaModule,

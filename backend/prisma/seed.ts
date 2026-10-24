@@ -8,9 +8,14 @@ async function main() {
   await prisma.petition.create({
     data: {
       title: 'Clean Energy & Solar Transition for Public Schools',
+      slug: 'clean-energy-solar-transition-public-schools',
       description: 'Petition to transition city public schools to 100% renewable solar energy by 2028.',
-      targetSignatures: 5000,
+      target: 'GOVERNMENT',
+      targetName: 'City School Board',
+      signatureGoal: 5000,
       currentSignatures: 1240,
+      status: 'ACTIVE',
+      creatorId: 'seed-placeholder',
     },
   });
 

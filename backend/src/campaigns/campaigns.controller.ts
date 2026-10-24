@@ -38,7 +38,7 @@ export class CampaignsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update campaign' })
-    update(@Param('id') id: string, @Request() req, @Body() dto: any) {
+    update(@Param('id') id: string, @Request() req: any, @Body() dto: any) {
         return this.campaignsService.update(id, req.user.userId, dto);
     }
 

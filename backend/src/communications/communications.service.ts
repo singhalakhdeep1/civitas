@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as sgMail from '@sendgrid/mail';
-import * as twilio from 'twilio';
+import twilio from 'twilio';
 
 @Injectable()
 export class CommunicationsService {
@@ -11,7 +11,7 @@ export class CommunicationsService {
         sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
 
         if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-            this.twilioClient = twilio(
+            this.twilioClient = (twilio as any)(
                 process.env.TWILIO_ACCOUNT_SID,
                 process.env.TWILIO_AUTH_TOKEN
             );
@@ -36,7 +36,7 @@ export class CommunicationsService {
                     userId: dto.userId,
                     type: 'EMAIL',
                     title: dto.subject,
-                    content: dto.text,
+                    message: dto.text,
                     read: false,
                 },
             });
@@ -66,7 +66,7 @@ export class CommunicationsService {
                     userId: dto.userId,
                     type: 'SMS',
                     title: 'SMS Notification',
-                    content: dto.message,
+                    message: dto.message,
                     read: false,
                 },
             });

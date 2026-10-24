@@ -92,6 +92,7 @@ export class VolunteeringService {
     async logHours(applicationId: string, dto: any) {
         const application = await this.prisma.volunteerApplication.findUnique({
             where: { id: applicationId },
+            include: { opportunity: true },
         });
 
         if (!application || application.status !== 'APPROVED') {
@@ -100,8 +101,11 @@ export class VolunteeringService {
 
         return this.prisma.volunteerHours.create({
             data: {
-                applicationId,
-                ...dto,
+                userId: application.userId,
+                opportunityId: application.opportunityId,
+                date: dto.date ? new Date(dto.date) : new Date(),
+                hours: dto.hours,
+                description: dto.description,
             },
         });
     }
@@ -109,25 +113,25 @@ export class VolunteeringService {
     async generateCertificate(userId: string, nonprofitId: string) {
         const totalHours = await this.prisma.volunteerHours.aggregate({
             where: {
-                application: {
-                    userId,
-                    opportunity: { nonprofitId },
-                },
+                userId,
+                opportunity: { nonprofitId },
                 verified: true,
             },
             _sum: { hours: true },
         });
 
-        if (!totalHours._sum.hours || totalHours._sum.hours < 10) {
+        const hours = totalHours._sum.hours ?? 0;
+        if (hours < 10) {
             throw new BadRequestException('Minimum 10 hours required');
         }
 
         return this.prisma.volunteerCertificate.create({
             data: {
                 userId,
-                nonprofitId,
-                totalHours: totalHours._sum.hours,
-                certificateNumber: `CERT-${Date.now()}-${userId.slice(0, 8)}`,
+                title: 'Volunteer Service Certificate',
+                description: `Completed ${hours} volunteer hours`,
+                totalHours: hours,
+                verificationCode: `CERT-${Date.now()}-${userId.slice(0, 8)}`,
             },
         });
     }
@@ -155,21 +159,17 @@ export class VolunteeringService {
     async getMyHours(userId: string) {
         const hours = await this.prisma.volunteerHours.findMany({
             where: {
-                application: { userId },
+                userId,
                 verified: true,
             },
             include: {
-                application: {
+                opportunity: {
                     include: {
-                        opportunity: {
-                            include: {
-                                nonprofit: {
-                                    select: {
-                                        id: true,
-                                        name: true,
-                                        logo: true,
-                                    },
-                                },
+                        nonprofit: {
+                            select: {
+                                id: true,
+                                name: true,
+                                logo: true,
                             },
                         },
                     },
@@ -180,7 +180,7 @@ export class VolunteeringService {
 
         const total = await this.prisma.volunteerHours.aggregate({
             where: {
-                application: { userId },
+                userId,
                 verified: true,
             },
             _sum: { hours: true },
@@ -188,7 +188,7 @@ export class VolunteeringService {
 
         return {
             hours,
-            totalHours: total._sum.hours || 0,
+            totalHours: total._sum.hours ?? 0,
         };
     }
 }

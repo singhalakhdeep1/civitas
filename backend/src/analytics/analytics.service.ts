@@ -22,11 +22,10 @@ export class AnalyticsService {
             take: 10,
             orderBy: { createdAt: 'desc' },
             include: {
-                nonprofit: {
+                campaign: {
                     select: {
                         id: true,
-                        name: true,
-                        logo: true,
+                        title: true,
                     },
                 },
             },
@@ -96,9 +95,7 @@ export class AnalyticsService {
 
         const volunteerStats = await this.prisma.volunteerHours.aggregate({
             where: {
-                application: {
-                    opportunity: { nonprofitId },
-                },
+                opportunity: { nonprofitId },
                 verified: true,
             },
             _sum: { hours: true },
@@ -129,7 +126,7 @@ export class AnalyticsService {
             totalDonors: nonprofit.donorCount,
             activeCampaigns: campaignStats._count,
             totalRaised: campaignStats._sum.currentAmount || 0,
-            volunteerHours: volunteerStats._sum.hours || 0,
+            volunteerHours: volunteerStats._sum?.hours ?? 0,
             totalVolunteers: volunteerStats._count,
             eventAttendees: eventStats._count,
             monthlyDonations,

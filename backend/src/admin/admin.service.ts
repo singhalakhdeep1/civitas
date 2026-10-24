@@ -52,7 +52,7 @@ export class AdminService {
 
         return this.prisma.user.update({
             where: { id: targetUserId },
-            data: { role },
+            data: { role: role as any },
         });
     }
 
@@ -62,7 +62,7 @@ export class AdminService {
         return this.prisma.nonprofit.findMany({
             where: {
                 verified: false,
-                taxExemptDocument: { not: null },
+                taxExemptDoc: { not: null },
             },
             include: {
                 admins: {
@@ -105,9 +105,9 @@ export class AdminService {
                         },
                     },
                 },
-                nonprofit: {
+                campaign: {
                     select: {
-                        name: true,
+                        title: true,
                     },
                 },
             },
@@ -134,14 +134,20 @@ export class AdminService {
                     data: { status: action === 'approve' ? 'ACTIVE' : 'CLOSED' },
                 });
             case 'thread':
+                if (action === 'delete') {
+                    return this.prisma.forumThread.delete({ where: { id: contentId } });
+                }
                 return this.prisma.forumThread.update({
                     where: { id: contentId },
-                    data: { deleted: action === 'delete' },
+                    data: { locked: true },
                 });
             case 'post':
+                if (action === 'delete') {
+                    return this.prisma.forumPost.delete({ where: { id: contentId } });
+                }
                 return this.prisma.forumPost.update({
                     where: { id: contentId },
-                    data: { deleted: action === 'delete' },
+                    data: { edited: true },
                 });
             default:
                 throw new ForbiddenException('Invalid content type');

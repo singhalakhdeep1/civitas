@@ -41,18 +41,6 @@ export class PetitionsService {
         const petition = await this.prisma.petition.findUnique({
             where: { id },
             include: {
-                creator: {
-                    select: {
-                        profile: {
-                            select: {
-                                firstName: true,
-                                lastName: true,
-                                displayName: true,
-                                avatar: true,
-                            },
-                        },
-                    },
-                },
                 updates: {
                     orderBy: { createdAt: 'desc' },
                     take: 10,

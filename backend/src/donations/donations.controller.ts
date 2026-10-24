@@ -10,7 +10,7 @@ export class DonationsController {
 
     @Post('one-time')
     @ApiOperation({ summary: 'Create one-time donation' })
-    async createOneTime(@Body() dto: any, @Request() req) {
+    async createOneTime(@Body() dto: any, @Request() req: any) {
         const userId = req.user?.userId || null;
         return this.donationsService.createOneTimeDonation(userId, dto);
     }
@@ -19,7 +19,7 @@ export class DonationsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Create recurring donation' })
-    createRecurring(@Body() dto: any, @Request() req) {
+    createRecurring(@Body() dto: any, @Request() req: any) {
         return this.donationsService.createRecurringDonation(req.user.userId, dto);
     }
 
@@ -33,7 +33,7 @@ export class DonationsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get my donations' })
-    getMyDonations(@Request() req) {
+    getMyDonations(@Request() req: any) {
         return this.donationsService.getMyDonations(req.user.userId);
     }
 
@@ -41,7 +41,7 @@ export class DonationsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get my recurring donations' })
-    getMyRecurring(@Request() req) {
+    getMyRecurring(@Request() req: any) {
         return this.donationsService.getMyRecurringDonations(req.user.userId);
     }
 
@@ -49,7 +49,7 @@ export class DonationsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Cancel recurring donation' })
-    cancelRecurring(@Param('id') id: string, @Request() req) {
+    cancelRecurring(@Param('id') id: string, @Request() req: any) {
         return this.donationsService.cancelRecurring(id, req.user.userId);
     }
 

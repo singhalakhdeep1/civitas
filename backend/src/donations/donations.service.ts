@@ -77,22 +77,22 @@ export class DonationsService {
             });
 
             // Create Stripe subscription
+            const price = await this.stripe.prices.create({
+                currency: dto.currency || 'usd',
+                unit_amount: Math.round(dto.amount * 100),
+                recurring: {
+                    interval: dto.frequency === 'MONTHLY' ? 'month' :
+                        dto.frequency === 'QUARTERLY' ? 'month' : 'year',
+                    interval_count: dto.frequency === 'QUARTERLY' ? 3 : 1,
+                },
+                product_data: {
+                    name: `Recurring donation to ${dto.nonprofitId}`,
+                },
+            });
+
             const subscription = await this.stripe.subscriptions.create({
                 customer: customer.id,
-                items: [{
-                    price_data: {
-                        currency: dto.currency || 'usd',
-                        unit_amount: Math.round(dto.amount * 100),
-                        recurring: {
-                            interval: dto.frequency === 'MONTHLY' ? 'month' :
-                                dto.frequency === 'QUARTERLY' ? 'month' : 'year',
-                            interval_count: dto.frequency === 'QUARTERLY' ? 3 : 1,
-                        },
-                        product_data: {
-                            name: `Recurring donation to ${dto.nonprofitId}`,
-                        },
-                    },
-                }],
+                items: [{ price: price.id }],
                 metadata: {
                     userId,
                     nonprofitId: dto.nonprofitId,
@@ -171,7 +171,6 @@ export class DonationsService {
             where: { id: donationId },
             include: {
                 user: { include: { profile: true } },
-                nonprofit: true,
                 campaign: true,
             },
         });
@@ -197,13 +196,6 @@ export class DonationsService {
         return this.prisma.donation.findMany({
             where: { userId, status: 'COMPLETED' },
             include: {
-                nonprofit: {
-                    select: {
-                        id: true,
-                        name: true,
-                        logo: true,
-                    },
-                },
                 campaign: {
                     select: {
                         id: true,
@@ -220,13 +212,7 @@ export class DonationsService {
         return this.prisma.recurringDonation.findMany({
             where: { userId, active: true },
             include: {
-                nonprofit: {
-                    select: {
-                        id: true,
-                        name: true,
-                        logo: true,
-                    },
-                },
+                user: true,
             },
             orderBy: { createdAt: 'desc' },
         });

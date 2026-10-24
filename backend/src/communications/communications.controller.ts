@@ -36,7 +36,7 @@ export class CommunicationsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get notifications' })
-    getNotifications(@Request() req, @Query() filters: any) {
+    getNotifications(@Request() req: any, @Query() filters: any) {
         return this.communicationsService.getNotifications(req.user.userId, filters);
     }
 
@@ -44,7 +44,7 @@ export class CommunicationsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Mark as read' })
-    markAsRead(@Request() req, @Param('id') id: string) {
+    markAsRead(@Request() req: any, @Param('id') id: string) {
         return this.communicationsService.markAsRead(req.user.userId, id);
     }
 
@@ -52,7 +52,7 @@ export class CommunicationsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get preferences' })
-    getPreferences(@Request() req) {
+    getPreferences(@Request() req: any) {
         return this.communicationsService.getPreferences(req.user.userId);
     }
 
@@ -60,7 +60,7 @@ export class CommunicationsController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update preferences' })
-    updatePreferences(@Request() req, @Body() dto: any) {
+    updatePreferences(@Request() req: any, @Body() dto: any) {
         return this.communicationsService.updatePreferences(req.user.userId, dto);
     }
 }
